@@ -17,7 +17,8 @@ def cvify(frame, templ):
 
 	print("match score:", maxVal, "at:", maxLoc)
 	if maxVal < 0.45:
-	    raise SystemExit("Template match too weak; adjust template or thresholds")
+	    #raise SystemExit("Template match too weak; adjust template or thresholds")
+	    print("Template match too weak; adjust template or thresholds")
 
 	return cv2.minMaxLoc(res)
 
@@ -51,10 +52,6 @@ def get(img_path, out_path, tmp_path, btm_path, debug=True):
 	# cv2.imwrite(f"{out_path}half.jpg", roi)
 	# Uncomment to debug halfway ones
 
-	dbg = frame.copy()
-	cv2.rectangle(dbg, (x0, y0), (x0 + templ.shape[1], y0 + templ.shape[0]), (0,255,0), 2)
-	cv2.rectangle(dbg, (x1, y1), (x2, y2), (0,0,255), 2)
-	cv2.imwrite("data/debug_boxes_00.jpg", dbg)
 
 	## Now we remove the bottom part.
 
@@ -65,6 +62,13 @@ def get(img_path, out_path, tmp_path, btm_path, debug=True):
 	# keep everything ABOVE where the bottom template begins
 	roi2 = roi[:by, :]
 
+	dbg = frame.copy()
+	cv2.rectangle(dbg, (x0, y0), (x0 + templ.shape[1], y0 + templ.shape[0]), (0,255,0), 2)
+
+	cv2.rectangle(dbg, (x1, y1), (x2, y2), (0,0,255), 2)
+	# For bottom.
+	cv2.rectangle(dbg, (x1+bx, y1+by),  (x1+bx+tw, y1+by+th), (255, 0, 255), 2)
+	cv2.imwrite("data/debug_boxes_00.jpg", dbg)
 
 	cv2.imwrite(out_path, roi2)
 if __name__ == "__main__":
